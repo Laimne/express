@@ -30,7 +30,20 @@ app.get('/ate', (req, res) => {
 app.get('/super/cool', (req, res) => {
     res.send('1234546')
 });
+    app.get("/trees", (req, res) => {
 
-app.listen(port, () => {
-    console.log(`Bebras klauso ${port} porto!`)
-});
+        const sql = `
+      
+        SELECT id, type, title, height FROM trees
+        `;
+        con.query(sql, (err, result) => {
+            if (err) throw err
+            res.send(result)
+        });
+    });
+      app.listen(port, () => {
+      
+        console.log(`Bebras klauso ${port} porto!`)
+      
+      });
+      
