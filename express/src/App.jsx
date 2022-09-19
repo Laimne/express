@@ -1,15 +1,32 @@
+import { useEffect } from 'react';
+import { useState } from 'react';
 import './App.scss';
-import Squere from './Squere';
+import axios from 'axios';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>T1 DONE</h1>
-        <Squere color="crimson" />
-      </header>
-    </div>
-  );
+
+    const [trees, setTrees] = useState([]);
+
+    useEffect(() => {
+        axios.get('http://localhost:3003/trees')
+        .then(res => {
+            setTrees(res.data);
+        })
+    }, []);
+
+
+    return (
+        <div className="App">
+            <header className="App-header">
+            <h1>Server</h1>
+            <ul>
+            {
+                trees.map(t => <li key={t.id}>{t.title} <i>{t.height}m</i></li>)
+            }
+            </ul>
+            </header>
+        </div>
+    );
 }
 
 export default App;
