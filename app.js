@@ -84,6 +84,7 @@ app.post("/trees", (req, res) => {
 });
 
 
+
 //DELETE
 // DELETE FROM table_name WHERE condition;
 app.delete("/trees/:id", (req, res) => {

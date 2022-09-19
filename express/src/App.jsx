@@ -49,6 +49,7 @@ function App() {
         });
     }, [deleteData]);
 
+    
     useEffect(() => {
         if (null === editData) {
             return;
