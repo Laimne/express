@@ -2,30 +2,83 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import './App.scss';
 import axios from 'axios';
+import List from './List';
+import TreesProvider from './TreesProvider';
+import Create from './Create';
+import Edit from './Edit';
+
+const types = [
+    { id: 1, type: 'Lapuotis' },
+    { id: 2, type: 'Spygliuotis' },
+    { id: 3, type: 'Palmė' }
+];
 
 function App() {
 
     const [trees, setTrees] = useState([]);
+    const [lastUpdate, setLastUpdate] = useState(Date.now());
+    const [createData, setCreateData] = useState(null);
+    const [deleteData, setDeleteData] = useState(null);
+    const [modalData, setModalData] = useState(null);
+    const [editData, setEditData] = useState(null);
 
     useEffect(() => {
         axios.get('http://localhost:3003/trees')
+            .then(res => {
+                setTrees(res.data);
+            })
+    }, [lastUpdate]);
+
+    useEffect(() => {
+        if (null === createData) {
+            return;
+        }
+        axios.post('http://localhost:3003/trees', createData)
         .then(res => {
-            setTrees(res.data);
-        })
-    }, []);
+            setLastUpdate(Date.now());
+        });
+    }, [createData]);
+
+    useEffect(() => {
+        if (null === deleteData) {
+            return;
+        }
+        axios.delete('http://localhost:3003/trees' + deleteData.id)
+        .then(res => {
+            setLastUpdate(Date.now());
+        });
+    }, [deleteData]);
+
+    useEffect(() => {
+        if (null === editData) {
+            return;
+        }
+        axios.put('http://localhost:3003/trees/' + editData.id, editData)
+        .then(res => {
+            setLastUpdate(Date.now());
+        });
+    }, [editData]);
+
 
 
     return (
-        <div className="App">
-            <header className="App-header">
-            <h1>Server</h1>
-            <ul>
-            {
-                trees.map(t => <li key={t.id}>{t.title} <i>{t.height}m</i></li>)
-            }
-            </ul>
-            </header>
-        </div>
+        <TreesProvider.Provider value={{
+            trees,
+            types,
+            setCreateData,
+            setDeleteData,
+            modalData,
+            setModalData,
+            setEditData
+        }}>
+            <div className="App">
+                <header className="App-header">
+                    <Create />
+                    <List />
+                </header>
+            </div>
+            <Edit />
+        </TreesProvider.Provider>
     );
 }
 
